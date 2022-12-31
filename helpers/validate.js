@@ -12,7 +12,6 @@ const respOk = {
   statusText: 'ok',
   text: 'La información se ha procesado correctamente',
 }
-
 const valida_usuario = (url) => {
   return /^https?:\/\/[\w\-]+(\.[\w\-]+)+[/#?]?.*$/.test(url)
 }
@@ -25,11 +24,9 @@ const duplicatePost = async (payload) => {
   const { rows } = await pool.query(SQLquery)
   return rows
 }
-
 const validateUrl = async (url) => {
   const urlEnd = url.slice(-4)
   const urlEnd2 = url.slice(-5)
-  console.log(urlEnd, urlEnd2)
   if (
     urlEnd === '.jpg' ||
     urlEnd === '.png' ||
@@ -46,14 +43,12 @@ const validateUrl = async (url) => {
     return false
   }
 }
-
 const validateInput = async (payload) => {
   let result = ''
   const resultDucplicate = await duplicatePost(payload)
 
   const resultUrl = await validateUrl(payload.url.toLowerCase())
   const resultEr = valida_usuario(payload.url.toLowerCase())
-  console.log(resultEr)
   if (
     payload.titulo === '' ||
     payload.url === '' ||
@@ -69,8 +64,6 @@ const validateInput = async (payload) => {
   } else {
     result = respOk
   }
-
   return result
 }
-
 module.exports = { validateInput }
