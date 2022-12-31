@@ -8,11 +8,7 @@ const CsbInspector = require('csb-inspector')
 CsbInspector()
 require('dotenv').config()
 const { obtenerPosts, agregarPosts } = require('./api/models/postModels')
-const {
-  validateInput,
-  validateURL,
-  validaformat,
-} = require('./helpers/validate')
+const { validateInput } = require('./helpers/validate')
 const errorServer = {
   status: 500,
   statusText: 'error',
