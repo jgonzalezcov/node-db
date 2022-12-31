@@ -33,7 +33,17 @@ app.get('/', (req, res) => {
       .send({ status: errorServer.statusText, data: errorServer.text })
   }
 })
-
+/****************************Endpoint para buscar los Posts**********************************/
+app.get('/posts', async (req, res) => {
+  try {
+    const posts = await obtenerPosts()
+    res.json(posts)
+  } catch (error) {
+    res
+      .status(errorServer.status)
+      .send({ status: errorServer.statusText, data: errorServer.text })
+  }
+})
 /****************************Endpoint para crear Posts**********************************/
 app.post('/posts', async (req, res) => {
   try {
