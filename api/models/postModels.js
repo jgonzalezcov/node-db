@@ -3,7 +3,7 @@ const credentials = require('../../config/postgressql')
 const pool = new Pool(credentials)
 
 /*******************Cominucación a bases de datos Postgressql para que trae todos los posts**********************/
-const obtenerPosts = async () => {
+const readPosts = async () => {
   try {
     const { rows } = await pool.query(
       'SELECT id, title as titulo, img, description as descripcion, likes  FROM posts'
@@ -15,7 +15,7 @@ const obtenerPosts = async () => {
   }
 }
 
-const agregarPosts = async (payload) => {
+const addPosts = async (payload) => {
   const SQLquery = {
     text: 'INSERT INTO posts (id, title, img, description, likes) VALUES (DEFAULT, $1, $2, $3, $4) RETURNING *',
     values: [payload.titulo, payload.url, payload.descripcion, payload.likes],
@@ -29,4 +29,4 @@ const agregarPosts = async (payload) => {
   }
 }
 
-module.exports = { obtenerPosts, agregarPosts }
+module.exports = { readPosts, addPosts }

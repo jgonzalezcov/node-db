@@ -7,7 +7,7 @@ app.use(express.json())
 const CsbInspector = require('csb-inspector')
 CsbInspector()
 require('dotenv').config()
-const { obtenerPosts, agregarPosts } = require('./api/models/postModels')
+const { readPosts, addPosts } = require('./api/models/postModels')
 const { validateInput } = require('./helpers/validate')
 const errorServer = {
   status: 500,
@@ -32,7 +32,7 @@ app.get('/', (req, res) => {
 /****************************Endpoint para buscar los Posts**********************************/
 app.get('/posts', async (req, res) => {
   try {
-    const posts = await obtenerPosts()
+    const posts = await readPosts()
     res.json(posts)
   } catch (error) {
     res
@@ -46,7 +46,7 @@ app.post('/posts', async (req, res) => {
     const payload = req.body
     resp = await validateInput(payload)
     if (resp.status === 200) {
-      await agregarPosts(payload)
+      await addPosts(payload)
       res.send('Post creado con exito')
     }
   } catch (error) {
