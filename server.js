@@ -48,6 +48,8 @@ app.post('/posts', async (req, res) => {
     if (resp.status === 200) {
       await addPosts(payload)
       res.send('Post creado con exito')
+    } else {
+      res.status(resp.status).send({ status: resp.statusText, data: resp.text })
     }
   } catch (error) {
     res

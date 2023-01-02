@@ -7,12 +7,27 @@ const respEroor = {
   statusText: 'error',
   text: 'Info Server: No se han recibido todos los parametros',
 }
+const respEroor2 = {
+  status: 400,
+  statusText: 'error',
+  text: 'Info Server: Registro ya existe',
+}
+const respEroor3 = {
+  status: 400,
+  statusText: 'error',
+  text: 'Info Server: Extención de imagen no es valida',
+}
+const respEroor4 = {
+  status: 400,
+  statusText: 'error',
+  text: 'Info Server: El formato de url no es valida',
+}
 const respOk = {
   status: 200,
   statusText: 'ok',
   text: 'La información se ha procesado correctamente',
 }
-const valida_usuario = (url) => {
+const validaEr = (url) => {
   return /^https?:\/\/[\w\-]+(\.[\w\-]+)+[/#?]?.*$/.test(url)
 }
 //Funcion muestra si existe registro con los mismos datos que queremos agregar//
@@ -48,7 +63,7 @@ const validateInput = async (payload) => {
   const resultDucplicate = await duplicatePost(payload)
 
   const resultUrl = await validateUrl(payload.url.toLowerCase())
-  const resultEr = valida_usuario(payload.url.toLowerCase())
+  const resultEr = validaEr(payload.url.toLowerCase())
   if (
     payload.titulo === '' ||
     payload.url === '' ||
@@ -56,11 +71,11 @@ const validateInput = async (payload) => {
   ) {
     return (result = respEroor)
   } else if (resultDucplicate[0].num > 0) {
-    return (result = respEroor)
+    return (result = respEroor2)
   } else if (resultUrl === false) {
-    return (result = respEroor)
+    return (result = respEroor3)
   } else if (resultEr === false) {
-    return (result = respEroor)
+    return (result = respEroor4)
   } else {
     result = respOk
   }
