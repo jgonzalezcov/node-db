@@ -1,5 +1,5 @@
 const pool = require('../../helpers/connectDb').getInstance()
-/*******************Cominucación a bases de datos Postgressql para que trae todos los posts**********************/
+/*******************Comunicación a bases de datos Postgressql para que trae todos los posts**********************/
 const readPosts = async () => {
   try {
     const { rows } = await pool.query(
@@ -11,7 +11,7 @@ const readPosts = async () => {
     throw new Error(e)
   }
 }
-/*******************Cominucación a bases de datos Postgressql Agregar posts**********************/
+/*******************Comunicación a bases de datos Postgressql Agregar posts**********************/
 const addPosts = async (payload) => {
   const SQLquery = {
     text: 'INSERT INTO posts (id, title, img, description, likes) VALUES (DEFAULT, $1, $2, $3, $4) RETURNING *',
@@ -26,7 +26,7 @@ const addPosts = async (payload) => {
   }
 }
 
-/*******************Cominucación a bases de datos Postgressql para actualiza numero de posts**********************/
+/*******************Comunicación a bases de datos Postgressql para actualiza numero de posts**********************/
 
 const addLike = async (id) => {
   const SQLquery = {
@@ -41,5 +41,19 @@ const addLike = async (id) => {
     throw new Error(e)
   }
 }
+/*******************Comunicación a bases de datos Postgressql para eliminar posts**********************/
+const deletePosts = async (id) => {
+  const SQLquery = {
+    text: 'DELETE FROM posts WHERE id = $1 RETURNING *',
+    values: [id],
+  }
+  try {
+    const result = await pool.query(SQLquery)
+    return result.rows
+  } catch (error) {
+    console.log('error al eliminar posts: ', e.code, e.message)
+    throw new Error(e)
+  }
+}
 
-module.exports = { readPosts, addPosts, addLike }
+module.exports = { readPosts, addPosts, addLike, deletePosts }
