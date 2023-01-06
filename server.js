@@ -7,14 +7,18 @@ app.use(express.json())
 const CsbInspector = require('csb-inspector')
 CsbInspector()
 require('dotenv').config()
-const { readPosts, addPosts } = require('./api/models/postModels')
-const { validateInput } = require('./helpers/validate')
+const {
+  readPosts,
+  addPosts,
+  addLike,
+  deletePosts,
+} = require('./api/models/postModels')
+const { validateInput, validateId } = require('./helpers/validate')
 const errorServer = {
   status: 500,
   statusText: 'error',
   text: 'Error interno del servidor',
 }
-
 /**********************************Levanta el Servidor***************************************/
 app.listen(process.env.PORT, () => {
   console.log('El servidor esta activo en el puerto', process.env.PORT)
@@ -51,6 +55,42 @@ app.post('/posts', async (req, res) => {
     } else {
       res.status(resp.status).send({ status: resp.statusText, data: resp.text })
     }
+  } catch (error) {
+    res
+      .status(errorServer.status)
+      .send({ status: errorServer.statusText, data: errorServer.text })
+  }
+})
+
+/****************************Endpoint agregar like**********************************/
+app.put('/posts/like/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+    respValidateId = await validateId(id)
+    if (respValidateId.status === 200) {
+      resp = await addLike(id)
+    }
+    res
+      .status(respValidateId.status)
+      .send({ status: respValidateId.statusText, data: respValidateId.text })
+  } catch (error) {
+    res
+      .status(errorServer.status)
+      .send({ status: errorServer.statusText, data: errorServer.text })
+  }
+})
+
+/****************************Endpoint Eliminar posts**********************************/
+app.delete('/posts/:id', async (req, res) => {
+  try {
+    const { id } = req.params
+    respValidateId = await validateId(id)
+    if (respValidateId.status === 200) {
+      await deletePosts(id)
+    }
+    res
+      .status(respValidateId.status)
+      .send({ status: respValidateId.statusText, data: respValidateId.text })
   } catch (error) {
     res
       .status(errorServer.status)
