@@ -55,5 +55,4 @@ const deletePosts = async (id) => {
     throw new Error(e)
   }
 }
-
 module.exports = { readPosts, addPosts, addLike, deletePosts }
