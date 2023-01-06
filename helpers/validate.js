@@ -1,6 +1,4 @@
-const { Pool } = require('pg')
-const credentials = require('../config/postgressql')
-const pool = new Pool(credentials)
+const pool = require('./connectDb').getInstance()
 
 const respEroor = {
   status: 400,
@@ -81,4 +79,34 @@ const validateInput = async (payload) => {
   }
   return result
 }
-module.exports = { validateInput }
+
+/*Validacion de actualizar like*/
+const idExists = async (id) => {
+  const SQLquery = {
+    text: 'SELECT CAST (COUNT(*) AS INT) as NUM FROM posts WHERE id=$1',
+    values: [id],
+  }
+  const { rows } = await pool.query(SQLquery)
+  return rows
+}
+
+const validateId = async (id) => {
+  result = ''
+  const resultId = await idExists(id)
+  if (resultId[0].num === 0) {
+    result = {
+      status: 400,
+      statusText: 'error',
+      text: 'Info Server: El id no existe',
+    }
+  } else {
+    result = {
+      status: 200,
+      statusText: 'ok',
+      text: 'Info Server: El id es correcto',
+    }
+  }
+  return result
+}
+
+module.exports = { validateInput, validateId }

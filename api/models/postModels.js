@@ -1,7 +1,4 @@
-const { Pool } = require('pg')
-const credentials = require('../../config/postgressql')
-const pool = new Pool(credentials)
-
+const pool = require('../../helpers/connectDb').getInstance()
 /*******************Cominucación a bases de datos Postgressql para que trae todos los posts**********************/
 const readPosts = async () => {
   try {
@@ -14,7 +11,7 @@ const readPosts = async () => {
     throw new Error(e)
   }
 }
-
+/*******************Cominucación a bases de datos Postgressql Agregar posts**********************/
 const addPosts = async (payload) => {
   const SQLquery = {
     text: 'INSERT INTO posts (id, title, img, description, likes) VALUES (DEFAULT, $1, $2, $3, $4) RETURNING *',
@@ -29,4 +26,20 @@ const addPosts = async (payload) => {
   }
 }
 
-module.exports = { readPosts, addPosts }
+/*******************Cominucación a bases de datos Postgressql para actualiza numero de posts**********************/
+
+const addLike = async (id) => {
+  const SQLquery = {
+    text: 'UPDATE posts SET likes = CASE WHEN likes IS NULL THEN 1 ELSE likes +1 END WHERE id=$1 RETURNING *',
+    values: [id],
+  }
+  try {
+    const result = await pool.query(SQLquery)
+    return result.rows
+  } catch (e) {
+    console.log('error al actulizar numero de likes: ', e.code, e.message)
+    throw new Error(e)
+  }
+}
+
+module.exports = { readPosts, addPosts, addLike }
