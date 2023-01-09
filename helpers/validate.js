@@ -1,25 +1,35 @@
 const pool = require('./connectDb').getInstance()
 
-const respEroor = {
-  status: 400,
-  statusText: 'error',
-  text: 'Info Server: No se han recibido todos los parametros',
+const errorMessage = async (v) => {
+  let message = ''
+  let code = 400
+  let messageText = 'error'
+  if (v === 1) {
+    message = 'Info Server: No se han recibido todos los parametros'
+  } else if (v === 2) {
+    message = 'Info Server: Registro ya existe'
+  } else if (v === 3) {
+    message = 'Info Server: Extención de imagen no es valida'
+  } else if (v === 4) {
+    message = 'Info Server: El formato de url no es valida'
+  } else if (v === 5) {
+    message = 'Info Server: El id no existe'
+  } else if (v === 6) {
+    message = 'Info Server: La información se ha procesado correctamente'
+    code = 200
+    messageText = 'ok'
+  } else if (v === 7) {
+    message = 'Info Server: El id es correcto'
+    code = 200
+    messageText = 'ok'
+  }
+  return {
+    status: code,
+    statusText: messageText,
+    text: message,
+  }
 }
-const respEroor2 = {
-  status: 400,
-  statusText: 'error',
-  text: 'Info Server: Registro ya existe',
-}
-const respEroor3 = {
-  status: 400,
-  statusText: 'error',
-  text: 'Info Server: Extención de imagen no es valida',
-}
-const respEroor4 = {
-  status: 400,
-  statusText: 'error',
-  text: 'Info Server: El formato de url no es valida',
-}
+
 const respOk = {
   status: 200,
   statusText: 'ok',
@@ -37,6 +47,7 @@ const duplicatePost = async (payload) => {
   const { rows } = await pool.query(SQLquery)
   return rows
 }
+
 const validateUrl = async (url) => {
   const urlEnd = url.slice(-4)
   const urlEnd2 = url.slice(-5)
@@ -59,7 +70,6 @@ const validateUrl = async (url) => {
 const validateInput = async (payload) => {
   let result = ''
   const resultDucplicate = await duplicatePost(payload)
-
   const resultUrl = await validateUrl(payload.url.toLowerCase())
   const resultEr = validaEr(payload.url.toLowerCase())
   if (
@@ -67,15 +77,15 @@ const validateInput = async (payload) => {
     payload.url === '' ||
     payload.descripcion === ''
   ) {
-    return (result = respEroor)
+    return (result = await errorMessage(1))
   } else if (resultDucplicate[0].num > 0) {
-    return (result = respEroor2)
+    return (result = await errorMessage(2))
   } else if (resultUrl === false) {
-    return (result = respEroor3)
+    return (result = await errorMessage(3))
   } else if (resultEr === false) {
-    return (result = respEroor4)
+    return (result = await errorMessage(4))
   } else {
-    result = respOk
+    result = await errorMessage(6)
   }
   return result
 }
@@ -94,17 +104,9 @@ const validateId = async (id) => {
   result = ''
   const resultId = await idExists(id)
   if (resultId[0].num === 0) {
-    result = {
-      status: 400,
-      statusText: 'error',
-      text: 'Info Server: El id no existe',
-    }
+    result = await errorMessage(5)
   } else {
-    result = {
-      status: 200,
-      statusText: 'ok',
-      text: 'Info Server: El id es correcto',
-    }
+    result = await errorMessage(7)
   }
   return result
 }

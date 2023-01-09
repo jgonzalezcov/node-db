@@ -19,6 +19,7 @@ const errorServer = {
   statusText: 'error',
   text: 'Error interno del servidor',
 }
+
 /**********************************Levanta el Servidor***************************************/
 app.listen(process.env.PORT, () => {
   console.log('El servidor esta activo en el puerto', process.env.PORT)
